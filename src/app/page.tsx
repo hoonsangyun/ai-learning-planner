@@ -17,9 +17,9 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex font-sans">
+    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row font-sans">
       {/* Sidebar Layout */}
-      <aside className="w-[400px] h-screen p-6 border-r border-gray-200 bg-white shadow-sm flex flex-col hidden lg:flex overflow-y-auto z-10 sticky top-0 custom-scrollbar">
+      <aside className="w-full lg:w-[400px] h-auto lg:h-screen p-6 border-b lg:border-r border-gray-200 bg-white shadow-sm flex flex-col overflow-y-auto z-10 sticky top-0 custom-scrollbar">
         <div className="mb-8 mt-2 flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center gap-3 tracking-tight">
@@ -66,22 +66,8 @@ export default async function Home() {
       </aside>
 
       {/* Main Content Area Layout */}
-      <main className="flex-1 h-screen flex flex-col overflow-hidden bg-gray-50/50">
-        <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 p-6 flex justify-between items-center z-10 lg:hidden shadow-sm sticky top-0">
-           <h1 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-blue-500" /> StudyLens
-          </h1>
-          <form action={async () => {
-            'use server';
-            const sb = await createClient();
-            await sb.auth.signOut();
-          }}>
-            <button type="submit" className="text-gray-500 hover:text-red-500">
-              <LogOut className="w-5 h-5" />
-            </button>
-          </form>
-        </header>
-
+      <main className="flex-1 h-auto lg:h-screen flex flex-col overflow-hidden bg-gray-50/50">
+        {/* Mobile Header Removed as Sidebar is now always visible at top */}
         <div className="flex-1 p-6 lg:p-10 overflow-y-auto custom-scrollbar flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto w-full">
           <div className="flex-[1] flex flex-col gap-6 lg:max-w-xl xl:max-w-2xl">
             <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">

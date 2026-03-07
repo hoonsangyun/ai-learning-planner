@@ -21,26 +21,58 @@ export default function ChatInterface() {
     },
   ]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
 
     const newUserMsg: Message = { id: Date.now().toString(), role: "user", content: input };
-    setMessages((prev) => [...prev, newUserMsg]);
-    setInput("");
+    const newMessages = [...messages, newUserMsg];
 
-    // Mock AI Response
-    setTimeout(() => {
+    setMessages(newMessages);
+    setInput("");
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: newMessages.map(msg => ({
+            role: msg.role,
+            content: msg.content
+          }))
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           role: "ai",
-          content: "좋아! 이차방정식의 근을 구하려면 먼저 이 공식을 떠올려봐야 해. \\(x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}\\) \n이 공식을 문제에 어떻게 적용하면 좋을까?",
-          isFormula: true
+          content: data.content,
+          isFormula: data.content.includes('\\(') || data.content.includes('\\[')
         },
       ]);
-    }, 1000);
+    } catch (error) {
+      console.error("Error communicating with AI:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          role: "ai",
+          content: "앗, 응답을 받아오는데 문제가 생겼어. 잠시 후 다시 시도해볼래?",
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const renderContent = (content: string, isFormula?: boolean) => {
@@ -105,12 +137,14 @@ export default function ChatInterface() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            disabled={isLoading}
           />
           <button
             onClick={handleSend}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+            disabled={isLoading}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors disabled:opacity-50"
           >
-            <Send className="w-4 h-4" />
+            {isLoading ? <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></span> : <Send className="w-4 h-4" />}
           </button>
         </div>
       </div>
