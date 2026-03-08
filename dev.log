@@ -2,13 +2,22 @@
 > my-app@0.1.0 dev
 > next dev
 
-⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
 ▲ Next.js 16.1.6 (Turbopack)
-- Local:         http://localhost:3001
-- Network:       http://192.168.0.2:3001
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
 - Environments: .env.local, .env
 
 ✓ Starting...
-⨯ Unable to acquire lock at /app/.next/dev/lock, is another instance of next dev running?
-  Suggestion: If you intended to restart next dev, terminate the other process, and then try again.
-[?25h
+✓ Ready in 3.8s
+Vision API Error: Error [ApiError]: {"error":{"code":400,"message":"API key not valid. Please pass a valid API key.","status":"INVALID_ARGUMENT","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key not valid. Please pass a valid API key."}]}}
+    at async POST (src/app/api/analyze/route.ts:55:22)
+  53 |
+  54 |     // Make the API call using gemini-2.0-flash which supports multimodal
+> 55 |     const response = await ai.models.generateContent({
+     |                      ^
+  56 |       model: "gemini-2.0-flash",
+  57 |       contents: [
+  58 |         { {
+  status: 400
+}
+ POST /api/analyze 500 in 3.5s (compile: 2.5s, render: 1064ms)

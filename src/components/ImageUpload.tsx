@@ -6,9 +6,9 @@ import TeX from "@matejmazur/react-katex";
 import "katex/dist/katex.min.css";
 
 interface AnalysisResult {
-  formulas: string;
-  steps: string;
-  answer: string;
+  problemAndDrawing: string;
+  coreConcepts: string;
+  stepByStepSolution: string;
 }
 
 export default function ImageUpload() {
@@ -172,38 +172,38 @@ export default function ImageUpload() {
         </div>
       )}
 
-      {/* Analysis Results (3-Parts) */}
+      {/* Analysis Results (4-Parts combined into 3 UI Sections) */}
       {result && (
          <div className="flex flex-col gap-4 mt-2">
             <h3 className="font-bold text-gray-800 text-lg">✨ AI 튜터의 분석 결과</h3>
 
-            {/* 1. 핵심 공식 */}
+            {/* 1 & 2. 문제 재구성 및 기하 도면 */}
+            <div className="bg-purple-50 border border-purple-100 rounded-xl p-5 shadow-sm">
+               <h4 className="flex items-center gap-2 font-bold text-purple-800 mb-3 border-b border-purple-200 pb-2">
+                 <Target className="w-5 h-5" /> 문제 재구성 및 기하 도면
+               </h4>
+               <div className="text-gray-700 text-sm">
+                 {renderMathText(result.problemAndDrawing)}
+               </div>
+            </div>
+
+            {/* 3. 핵심 수학 공식 */}
             <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 shadow-sm">
                <h4 className="flex items-center gap-2 font-bold text-emerald-800 mb-3 border-b border-emerald-200 pb-2">
-                 <BookOpen className="w-5 h-5" /> 1. 핵심 수학 공식
+                 <BookOpen className="w-5 h-5" /> 핵심 수학 공식
                </h4>
                <div className="text-gray-700 text-sm">
-                 {renderMathText(result.formulas)}
+                 {renderMathText(result.coreConcepts)}
                </div>
             </div>
 
-            {/* 2. 단계별 풀이 */}
+            {/* 4. 논리적 단계별 풀이 및 정답 */}
             <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 shadow-sm">
                <h4 className="flex items-center gap-2 font-bold text-blue-800 mb-3 border-b border-blue-200 pb-2">
-                 <Calculator className="w-5 h-5" /> 2. 단계별 풀이
+                 <Calculator className="w-5 h-5" /> 논리적 단계별 풀이
                </h4>
                <div className="text-gray-700 text-sm">
-                 {renderMathText(result.steps)}
-               </div>
-            </div>
-
-            {/* 3. 최종 결과 */}
-            <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-5 shadow-sm">
-               <h4 className="flex items-center gap-2 font-bold text-indigo-900 mb-3 border-b border-indigo-200 pb-2">
-                 <Target className="w-5 h-5" /> 3. 최종 결과
-               </h4>
-               <div className="text-gray-800 text-base font-medium">
-                 {renderMathText(result.answer)}
+                 {renderMathText(result.stepByStepSolution)}
                </div>
             </div>
          </div>
