@@ -12,8 +12,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Initialize the SDK. It will automatically use the GEMINI_API_KEY environment variable.
-    const ai = new GoogleGenAI({});
+    // Initialize the SDK explicitly passing the API key from environment variables.
+    if (!process.env.GEMINI_API_KEY) {
+        throw new Error("GEMINI_API_KEY environment variable is missing.");
+    }
+
+    const ai = new GoogleGenAI({
+        apiKey: process.env.GEMINI_API_KEY
+    });
 
     // The system instruction helps define the AI's persona and constraints.
     const systemInstruction =
@@ -25,10 +31,17 @@ export async function POST(req: NextRequest) {
 
     // Convert the frontend message format to the format expected by the GenAI SDK
     // Note: The GenAI SDK typically expects roles to be 'user' or 'model'
-    const formattedHistory = messages.map((msg: any) => ({
+    // Gemini API requires the conversation history to start with a 'user' message.
+    // If the first message in our frontend state is the AI greeting, we should filter it out.
+    let formattedHistory = messages.map((msg: any) => ({
       role: msg.role === "ai" ? "model" : "user",
       parts: [{ text: msg.content }],
     }));
+
+    // Ensure the history starts with a 'user' role
+    while (formattedHistory.length > 0 && formattedHistory[0].role !== "user") {
+        formattedHistory.shift();
+    }
 
     // Use generateContent with the full history to maintain conversation state
     const response = await ai.models.generateContent({
