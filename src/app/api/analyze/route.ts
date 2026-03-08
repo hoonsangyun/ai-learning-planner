@@ -51,9 +51,9 @@ LaTeX 수식 작성 시, 인라인 수식은 \\( ... \\) 로 감싸고, 블록 �
 }
 `;
 
-    // Make the API call using gemini-2.0-flash which supports multimodal
+    // Make the API call using the specified model from environment variables, defaulting to gemini-1.5-flash
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: process.env.GEMINI_MODEL || "gemini-1.5-flash",
       contents: [
         {
           role: "user",

@@ -21,3 +21,5 @@ Vision API Error: Error [ApiError]: {"error":{"code":400,"message":"API key not 
   status: 400
 }
  POST /api/analyze 500 in 3.5s (compile: 2.5s, render: 1064ms)
+  Reload env: .env.local
+  Reload env: .env
