@@ -69,7 +69,7 @@ export default async function Home() {
       <main className="flex-1 h-auto lg:h-screen flex flex-col overflow-hidden bg-gray-50/50">
         {/* Mobile Header Removed as Sidebar is now always visible at top */}
         <div className="flex-1 p-6 lg:p-10 overflow-y-auto custom-scrollbar flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto w-full">
-          <div className="flex-[1] flex flex-col gap-6 lg:max-w-xl xl:max-w-2xl">
+          <div className="flex-[1] min-w-0 flex flex-col gap-6 lg:max-w-xl xl:max-w-2xl">
             <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
               <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                 <span className="bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center text-sm font-black">1</span>
@@ -89,7 +89,7 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="flex-[1.5] flex flex-col h-[600px] lg:h-auto rounded-3xl overflow-hidden shadow-lg border border-indigo-50/50 hover:shadow-xl transition-shadow relative group">
+          <div className="flex-[1.5] min-w-0 flex flex-col h-[600px] lg:h-auto rounded-3xl overflow-hidden shadow-lg border border-indigo-50/50 hover:shadow-xl transition-shadow relative group">
              <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none z-0"></div>
              <div className="relative z-10 h-full w-full">
                 <ChatInterface />

@@ -12,6 +12,7 @@ interface SolutionStep {
 }
 
 interface AnalysisResult {
+  title: string;
   problem_formalization: string;
   formulas: string[];
   diagram_generation?: string;
@@ -187,7 +188,12 @@ export default function ImageUpload() {
       {/* Analysis Results (New JSON Structure) */}
       {result && (
          <div className="flex flex-col gap-4 mt-2">
-            <h3 className="font-bold text-gray-800 text-lg">✨ AI 튜터의 분석 결과</h3>
+            <h3 className="font-bold text-gray-800 text-lg flex flex-col gap-1">
+               <span>✨ AI 튜터의 분석 결과</span>
+               {result.title && (
+                 <span className="text-xl text-blue-600 ml-6">{result.title}</span>
+               )}
+            </h3>
 
             {/* 1. 문제 재구성 */}
             <div className="bg-purple-50 border border-purple-100 rounded-xl p-5 shadow-sm">
