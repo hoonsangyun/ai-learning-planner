@@ -5,10 +5,18 @@ import { UploadCloud, Search, AlertCircle, Calculator, Target, BookOpen } from "
 import TeX from "@matejmazur/react-katex";
 import "katex/dist/katex.min.css";
 
+interface SolutionStep {
+  step: number;
+  title: string;
+  content: string;
+}
+
 interface AnalysisResult {
-  problemAndDrawing: string;
-  coreConcepts: string;
-  stepByStepSolution: string;
+  problem_formalization: string;
+  formulas: string[];
+  diagram_generation?: string;
+  solution_steps: SolutionStep[];
+  final_answer: string;
 }
 
 export default function ImageUpload() {
@@ -176,38 +184,67 @@ export default function ImageUpload() {
         </div>
       )}
 
-      {/* Analysis Results (4-Parts combined into 3 UI Sections) */}
+      {/* Analysis Results (New JSON Structure) */}
       {result && (
          <div className="flex flex-col gap-4 mt-2">
             <h3 className="font-bold text-gray-800 text-lg">✨ AI 튜터의 분석 결과</h3>
 
-            {/* 1 & 2. 문제 재구성 및 기하 도면 */}
+            {/* 1. 문제 재구성 */}
             <div className="bg-purple-50 border border-purple-100 rounded-xl p-5 shadow-sm">
                <h4 className="flex items-center gap-2 font-bold text-purple-800 mb-3 border-b border-purple-200 pb-2">
-                 <Target className="w-5 h-5" /> 문제 재구성 및 기하 도면
+                 <Target className="w-5 h-5" /> 1. 문제 재구성 (Problem Formalization)
                </h4>
                <div className="text-gray-700 text-sm">
-                 {renderMathText(result.problemAndDrawing)}
+                 {renderMathText(result.problem_formalization)}
                </div>
+
+               {/* 2. 기하 도면 코드 (If any) */}
+               {result.diagram_generation && (
+                   <div className="mt-4 pt-4 border-t border-purple-200">
+                     <h5 className="font-semibold text-purple-700 mb-2">2. 기하 도면 생성 코드 (Python)</h5>
+                     <pre className="bg-white p-3 rounded-md text-xs text-gray-800 overflow-x-auto border border-gray-200">
+                       <code>{result.diagram_generation}</code>
+                     </pre>
+                   </div>
+               )}
             </div>
 
             {/* 3. 핵심 수학 공식 */}
             <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 shadow-sm">
                <h4 className="flex items-center gap-2 font-bold text-emerald-800 mb-3 border-b border-emerald-200 pb-2">
-                 <BookOpen className="w-5 h-5" /> 핵심 수학 공식
+                 <BookOpen className="w-5 h-5" /> 3. 핵심 수학 공식
                </h4>
-               <div className="text-gray-700 text-sm">
-                 {renderMathText(result.coreConcepts)}
-               </div>
+               <ul className="list-disc list-inside text-gray-700 text-sm space-y-2">
+                 {result.formulas.map((formula, idx) => (
+                    <li key={idx}>{renderMathText(formula)}</li>
+                 ))}
+               </ul>
             </div>
 
-            {/* 4. 논리적 단계별 풀이 및 정답 */}
+            {/* 4. 단계별 풀이 및 정답 */}
             <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 shadow-sm">
-               <h4 className="flex items-center gap-2 font-bold text-blue-800 mb-3 border-b border-blue-200 pb-2">
-                 <Calculator className="w-5 h-5" /> 논리적 단계별 풀이
+               <h4 className="flex items-center gap-2 font-bold text-blue-800 mb-4 border-b border-blue-200 pb-2">
+                 <Calculator className="w-5 h-5" /> 4. 논리적 단계별 풀이
                </h4>
-               <div className="text-gray-700 text-sm">
-                 {renderMathText(result.stepByStepSolution)}
+               <div className="flex flex-col gap-3">
+                 {result.solution_steps.map((stepInfo, idx) => (
+                    <div key={idx} className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
+                       <h5 className="font-bold text-blue-900 text-sm mb-1 border-b border-gray-100 pb-1">
+                          Step {stepInfo.step}: {renderMathText(stepInfo.title)}
+                       </h5>
+                       <div className="text-gray-700 text-sm mt-2">
+                          {renderMathText(stepInfo.content)}
+                       </div>
+                    </div>
+                 ))}
+               </div>
+
+               {/* Final Answer */}
+               <div className="mt-5 pt-4 border-t border-blue-200 flex items-center justify-between">
+                  <span className="font-bold text-blue-900 text-lg">최종 정답</span>
+                  <div className="bg-blue-600 text-white font-black px-6 py-2 rounded-full shadow-inner text-xl">
+                     {renderMathText(result.final_answer)}
+                  </div>
                </div>
             </div>
          </div>
