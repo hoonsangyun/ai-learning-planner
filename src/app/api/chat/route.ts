@@ -12,6 +12,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (process.env.USE_FAKE_LLM === 'true') {
+        // Return a dummy Socratic chat response for local testing
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network latency
+        return NextResponse.json({
+            role: "ai",
+            content: "좋은 질문이야! 방금 분석한 결과에서 미지수 \\( x \\) 를 구하는 식을 세울 수 있었어. 그렇다면 만약 밑변이 4가 아니라 6이었다면 피타고라스 정리 식이 어떻게 바뀌었을까?"
+        });
+    }
+
     // Initialize the SDK explicitly passing the API key from environment variables.
     if (!process.env.GEMINI_API_KEY) {
         throw new Error("GEMINI_API_KEY environment variable is missing.");

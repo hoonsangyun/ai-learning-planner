@@ -12,6 +12,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (process.env.USE_FAKE_LLM === 'true') {
+        // Return a dummy response for local testing
+        await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate network latency
+        return NextResponse.json({
+            problemAndDrawing: "재구성된 문제: 빗변의 길이가 $5$, 밑변이 $4$인 직각삼각형의 높이 $x$를 구하시오.\\n\\n```python\\nimport matplotlib.pyplot as plt\\nfig, ax = plt.subplots()\\n# ... (가상의 파이썬 도면 코드) ...\\nplt.show()\\n```",
+            coreConcepts: "피타고라스의 정리: 직각삼각형에서 빗변 길이의 제곱은 나머지 두 변의 길이의 제곱의 합과 같다. \\( a^2 + b^2 = c^2 \\)",
+            stepByStepSolution: "1. 피타고라스 정리에 대입: \\( x^2 + 4^2 = 5^2 \\)\\n2. 계산: \\( x^2 + 16 = 25 \\)\\n3. 이항: \\( x^2 = 9 \\)\\n4. 따라서 $x > 0$ 이므로 정답은 **3** 입니다."
+        });
+    }
+
     if (!process.env.GEMINI_API_KEY) {
       throw new Error("GEMINI_API_KEY is missing.");
     }
