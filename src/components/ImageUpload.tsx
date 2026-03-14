@@ -90,15 +90,19 @@ export default function ImageUpload() {
   };
 
   const renderMathText = (content: string) => {
-    // Basic regex to find inline \( ... \) and block \[ ... \]
-    const parts = content.split(/(\\\([\s\S]*?\\\)|\\[[\s\S]*?\\])/g);
+    // Regex to find inline (\(...\) or $...$) and block (\[...\] or $$...$$)
+    const parts = content.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|\\\([\s\S]*?\\\)|\\[[\s\S]*?\\])/g);
     return (
       <span className="whitespace-pre-wrap leading-relaxed">
         {parts.map((part, i) => {
-          if (part.startsWith("\\(") && part.endsWith("\\)")) {
-            return <TeX key={i} math={part.slice(2, -2)} />;
+          if (part.startsWith("$$") && part.endsWith("$$")) {
+            return <TeX key={i} math={part.slice(2, -2)} block />;
           } else if (part.startsWith("\\[") && part.endsWith("\\]")) {
             return <TeX key={i} math={part.slice(2, -2)} block />;
+          } else if (part.startsWith("$") && part.endsWith("$")) {
+             return <TeX key={i} math={part.slice(1, -1)} />;
+          } else if (part.startsWith("\\(") && part.endsWith("\\)")) {
+            return <TeX key={i} math={part.slice(2, -2)} />;
           }
           return <span key={i}>{part}</span>;
         })}
