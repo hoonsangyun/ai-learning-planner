@@ -23,3 +23,27 @@
 ✓ Compiled in 70ms
   Reload env: .env
 ✓ Compiled in 2.1s
+Error creating problem: Error [PrismaClientKnownRequestError]:
+Invalid `prisma.user.findFirst()` invocation in
+/app/.next/dev/server/chunks/[root-of-the-server]__e06da38d._.js:103:46
+
+  100 let userId = user?.id;
+  101 if (!userId) {
+  102     // if we are bypassing auth, we need a dummy user in db
+→ 103     let testUser = await prisma.user.findFirst(
+The table `main.User` does not exist in the current database.
+    at <unknown> (src/app/api/problems/route.ts:19:41)
+    at async POST (src/app/api/problems/route.ts:19:23)
+  17 |     if (!userId) {
+  18 |        // if we are bypassing auth, we need a dummy user in db
+> 19 |        let testUser = await prisma.user.findFirst();
+     |                                         ^
+  20 |        if (!testUser) {
+  21 |            testUser = await prisma.user.create({
+  22 |                data: { email: "test@example.com", name: "Test User" } {
+  code: 'P2021',
+  clientVersion: '6.4.1',
+  meta: [Object]
+}
+ POST /api/problems 500 in 5.5s (compile: 3.9s, render: 1545ms)
+[?25h
