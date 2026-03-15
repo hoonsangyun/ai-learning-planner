@@ -3,7 +3,7 @@
 import { useState } from "react";
 import ImageUpload, { AnalysisResult } from "@/components/ImageUpload";
 import ChatInterface from "@/components/ChatInterface";
-import ConfettiButton from "@/components/ConfettiButton";
+import LearningStatusSection from "@/components/LearningStatusSection";
 import LearningCalendar from "@/components/LearningCalendar";
 import FormulaNote from "@/components/FormulaNote";
 import { Sparkles, LayoutDashboard, LogOut } from "lucide-react";
@@ -12,10 +12,12 @@ export default function DashboardMain({ logoutAction }: { logoutAction: () => vo
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [refreshCalendar, setRefreshCalendar] = useState(0); // Trigger calendar refresh
+  const [isUnderstood, setIsUnderstood] = useState<boolean | null>(null);
 
   const handleAnalysisComplete = (imageUrl: string, result: AnalysisResult) => {
     setSelectedImage(imageUrl);
     setAnalysisResult(result);
+    setIsUnderstood(null);
   };
 
   const handleSaveToDB = async () => {
@@ -25,7 +27,7 @@ export default function DashboardMain({ logoutAction }: { logoutAction: () => vo
       const res = await fetch("/api/problems", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageUrl: selectedImage, result: analysisResult }),
+        body: JSON.stringify({ imageUrl: selectedImage, result: analysisResult, isUnderstood }),
       });
       if (res.ok) {
         setRefreshCalendar(prev => prev + 1);
@@ -68,6 +70,7 @@ export default function DashboardMain({ logoutAction }: { logoutAction: () => vo
              onSelectProblem={(img, result) => {
                setSelectedImage(img);
                setAnalysisResult(result);
+    setIsUnderstood(null);
              }}
           />
           <FormulaNote />
@@ -106,12 +109,17 @@ export default function DashboardMain({ logoutAction }: { logoutAction: () => vo
 
             <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col justify-center items-center gap-6 hover:shadow-md transition-shadow mt-auto">
               <div className="text-center space-y-2">
-                <h3 className="text-lg font-bold text-gray-800">이해를 완료했나요?</h3>
+                <h3 className="text-lg font-bold text-gray-800">학습을 완료했나요?</h3>
                 <p className="text-sm text-gray-500">
-                  충분히 이해했다면 아래 버튼을 눌러 학습을 기록해보세요.
+                  문제 이해도를 선택하고 학습 기록을 저장하세요.
                 </p>
               </div>
-              <ConfettiButton onConfettiComplete={handleSaveToDB} />
+              <LearningStatusSection
+                 isUnderstood={isUnderstood}
+                 onToggle={setIsUnderstood}
+                 onSave={handleSaveToDB}
+                 disabled={!analysisResult}
+              />
             </div>
           </div>
 

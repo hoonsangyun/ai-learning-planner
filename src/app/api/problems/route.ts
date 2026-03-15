@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/utils/prisma";
 import { createClient } from "@/utils/supabase/server";
 
-const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
@@ -15,7 +14,6 @@ export async function POST(req: Request) {
     // If null, we might just mock a user id for tests or just return error.
     let userId = user?.id;
     if (!userId) {
-       // if we are bypassing auth, we need a dummy user in db
        let testUser = await prisma.user.findFirst();
        if (!testUser) {
            testUser = await prisma.user.create({
@@ -25,8 +23,9 @@ export async function POST(req: Request) {
        userId = testUser.id;
     }
 
+
     const body = await req.json();
-    const { imageUrl, result } = body;
+    const { imageUrl, result, isUnderstood } = body;
 
     if (!imageUrl || !result) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -42,7 +41,7 @@ export async function POST(req: Request) {
         solutionSteps: JSON.stringify(result.solution_steps),
         finalAnswer: result.final_answer,
         formulasStr: JSON.stringify(result.formulas),
-        isUnderstood: true, // Auto set true when saving if we save when they click "이해했어요/저장"
+        isUnderstood: isUnderstood !== undefined ? isUnderstood : true,
       },
     });
 
@@ -59,6 +58,15 @@ export async function GET(req: Request) {
     const { data: { user } } = await supabase.auth.getUser();
 
     let userId = user?.id;
+    if (!userId) {
+       let testUser = await prisma.user.findFirst();
+       if (!testUser) {
+           testUser = await prisma.user.create({
+               data: { email: "test@example.com", name: "Test User" }
+           });
+       }
+       userId = testUser.id;
+    }
     if (!userId) {
        const testUser = await prisma.user.findFirst();
        userId = testUser?.id;
