@@ -6,7 +6,9 @@ generator client {
 }
 
 datasource db {
+  url      = "file:./dev.db"
   provider = "sqlite"
+
 }
 
 model User {
@@ -29,6 +31,13 @@ model Problem {
   user         User          @relation(fields: [userId], references: [id])
   chatMessages ChatMessage[]
   formulas     Formula[] // Formulas extracted from this problem
+  title                String?
+  problemFormalization String?
+  diagramGeneration    String?
+  solutionSteps        String? // Stores JSON stringified array of steps
+  finalAnswer          String?
+  formulasStr          String? // Store simple formulas array as JSON string
+
 }
 
 model ChatMessage {

@@ -21,3 +21,5 @@
  POST /api/analyze 200 in 1624ms (compile: 111ms, render: 1513ms)
 ✓ Compiled in 38ms
 ✓ Compiled in 70ms
+  Reload env: .env
+✓ Compiled in 2.1s

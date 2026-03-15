@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UploadCloud, Search, AlertCircle, Calculator, Target, BookOpen } from "lucide-react";
 import TeX from "@matejmazur/react-katex";
 import "katex/dist/katex.min.css";
@@ -11,7 +11,7 @@ interface SolutionStep {
   content: string;
 }
 
-interface AnalysisResult {
+export interface AnalysisResult {
   title: string;
   problem_formalization: string;
   formulas: string[];
@@ -20,14 +20,29 @@ interface AnalysisResult {
   final_answer: string;
 }
 
-export default function ImageUpload() {
+export default function ImageUpload({
+  externalImage,
+  externalResult,
+  onAnalysisComplete
+}: {
+  externalImage?: string | null,
+  externalResult?: AnalysisResult | null,
+  onAnalysisComplete?: (img: string, res: AnalysisResult) => void
+} = {}) {
   const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [fileType, setFileType] = useState<string | null>(null);
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (externalImage) setPreview(externalImage);
+    if (externalResult) setResult(externalResult);
+  }, [externalImage, externalResult]);
+
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -90,6 +105,9 @@ export default function ImageUpload() {
 
       const data = await res.json();
       setResult(data);
+      if (onAnalysisComplete && preview) {
+        onAnalysisComplete(preview, data);
+      }
     } catch (err: any) {
       console.error(err);
       setError("이미지를 분석하는 도중 문제가 발생했습니다. 다시 시도해주세요.");

@@ -1,6 +1,10 @@
-"use client";
+import re
 
-import { useState, useEffect } from "react";
+with open("src/components/LearningCalendar.tsx", "r") as f:
+    content = f.read()
+
+# Make the signature accept onSelectProblem
+new_sig = '''import { useState, useEffect } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, parseISO } from "date-fns";
 import { Calendar as CalendarIcon, X, Trash2 } from "lucide-react";
 import { AnalysisResult } from "@/components/ImageUpload";
@@ -8,7 +12,7 @@ import { AnalysisResult } from "@/components/ImageUpload";
 export default function LearningCalendar({ onSelectProblem }: { onSelectProblem?: (img: string, result: AnalysisResult) => void }) {
   const [currentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [problems, setProblems] = useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [problems, setProblems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchProblems = async () => {
@@ -46,7 +50,7 @@ export default function LearningCalendar({ onSelectProblem }: { onSelectProblem?
     }
   };
 
-  const handleProblemClick = (problem: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+  const handleProblemClick = (problem: any) => {
     if (onSelectProblem) {
       const result: AnalysisResult = {
         title: problem.title || "",
@@ -79,28 +83,20 @@ export default function LearningCalendar({ onSelectProblem }: { onSelectProblem?
       console.error("Delete failed:", error);
     }
   };
+'''
 
+content = re.sub(
+    r'import \{ useState \} from "react";.*?const handleDayClick = \(day: Date\) => \{.*?  \};',
+    new_sig,
+    content,
+    flags=re.DOTALL
+)
 
-  return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 w-full relative">
-      <div className="flex items-center gap-2 mb-6 text-gray-800">
-        <CalendarIcon className="w-5 h-5 text-indigo-500" />
-        <h3 className="font-bold text-lg">{format(currentDate, "MMMM yyyy")} 학습 기록</h3>
-      </div>
-
-      <div className="grid grid-cols-7 gap-2 text-center mb-2">
-        {['일', '월', '화', '수', '목', '금', '토'].map(day => (
-          <div key={day} className="text-xs font-medium text-gray-500 py-1">{day}</div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-7 gap-2">
-        {/* Placeholder for days before the start of the month */}
-        {Array.from({ length: monthStart.getDay() }).map((_, i) => (
-          <div key={`empty-${i}`} className="p-2" />
-        ))}
-
-        {daysInMonth.map((day, i) => {
+# Render the problems dynamically
+# Replace the days mapping logic
+content = re.sub(
+    r'\{daysInMonth\.map\(\(day, i\) => \{\n.*?return \(\n.*?\}\)\}',
+    r'''{daysInMonth.map((day, i) => {
           const dayProblems = getDayProblems(day);
           const isToday = isSameDay(day, new Date());
           const isSelected = selectedDate && isSameDay(day, selectedDate);
@@ -125,11 +121,15 @@ export default function LearningCalendar({ onSelectProblem }: { onSelectProblem?
               )}
             </button>
           );
-        })}
-      </div>
+        })}''',
+    content,
+    flags=re.DOTALL
+)
 
-      {/* Popup Modal */}
-      {selectedDate && (
+# Replace the popup rendering
+content = re.sub(
+    r'\{selectedDate && \(.*?<div className="absolute.*?상세 보기.*?</div>\s*\)\}',
+    r'''{selectedDate && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-gray-100 z-50">
           <div className="flex justify-between items-center mb-4">
             <h4 className="font-bold text-gray-800">{format(selectedDate, "yyyy년 M월 d일")} 학습 기록</h4>
@@ -161,7 +161,10 @@ export default function LearningCalendar({ onSelectProblem }: { onSelectProblem?
              ))}
           </div>
         </div>
-      )}
-    </div>
-  );
-}
+      )}''',
+    content,
+    flags=re.DOTALL
+)
+
+with open("src/components/LearningCalendar.tsx", "w") as f:
+    f.write(content)
