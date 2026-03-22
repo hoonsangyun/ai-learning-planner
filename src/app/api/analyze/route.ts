@@ -84,7 +84,7 @@ diagram_generation 코드는 문자열(String) 형태로 포함하며, 바로 �
 
     // Make the API call using the specified model from environment variables, defaulting to gemini-1.5-flash-latest
     const response = await ai.models.generateContent({
-      model: process.env.GEMINI_MODEL === "gemini-1.5-flash" ? "gemini-1.5-flash-latest" : (process.env.GEMINI_MODEL || "gemini-1.5-flash-latest"),
+      model: process.env.GEMINI_MODEL || "gemini-1.5-flash",
       contents: [
         {
           role: "user",

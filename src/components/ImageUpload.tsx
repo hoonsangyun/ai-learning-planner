@@ -43,32 +43,6 @@ export default function ImageUpload({
 
   useEffect(() => {
     if (result && result.diagram_generation) {
-      // Execute python code automatically
-      const executeCode = async () => {
-        setIsExecuting(true);
-        setExecuteError(null);
-        try {
-          const res = await fetch("/api/execute-python", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code: result.diagram_generation }),
-          });
-          const data = await res.json();
-          if (res.ok && data.base64) {
-            setGeneratedImage(`data:image/png;base64,${data.base64}`);
-          } else {
-            setExecuteError(data.error || "실행 오류");
-          }
-        } catch (e) {
-          console.error(e);
-          setExecuteError("서버 오류");
-        } finally {
-          setIsExecuting(false);
-        }
-      };
-
-      // if external result changed or fresh result
-      executeCode();
     } else {
       setGeneratedImage(null);
       setExecuteError(null);
