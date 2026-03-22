@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
 
     // Use generateContent with the full history to maintain conversation state
     const response = await ai.models.generateContent({
-        model: process.env.GEMINI_MODEL || "gemini-1.5-flash",
+        model: process.env.GEMINI_MODEL === "gemini-1.5-flash" ? "gemini-1.5-flash-latest" : (process.env.GEMINI_MODEL || "gemini-1.5-flash-latest"),
         contents: formattedHistory,
         config: {
             systemInstruction: systemInstruction,
