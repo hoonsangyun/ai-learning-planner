@@ -1,8 +1,14 @@
-import { NextResponse } from "next/server";
+import re
+
+with open("src/app/api/problems/route.ts", "r") as f:
+    content = f.read()
+
+# Instead of blindly replacing, let's just write a clean function for ensureUserExists
+clean_file = """import { NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
 import { createClient } from "@/utils/supabase/server";
 
-async function ensureLocalUser(user: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+async function ensureLocalUser(user: any) {
   if (!user || !user.id) return null;
   const existingUser = await prisma.user.findUnique({ where: { id: user.id } });
   if (!existingUser) {
@@ -89,3 +95,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+"""
+
+with open("src/app/api/problems/route.ts", "w") as f:
+    f.write(clean_file)
