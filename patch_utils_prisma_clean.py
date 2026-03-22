@@ -1,4 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+with open("src/utils/prisma.ts", "w") as f:
+    f.write("""import { PrismaClient } from "@prisma/client";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import path from "path";
 
@@ -16,3 +17,4 @@ export const prisma =
   });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+""")
